@@ -1,21 +1,24 @@
-<div align="center">
+# 🚀 AUTONOMOUS TRANSPORT ROVER
 
-<img src="https://capsule-render.vercel.app/api?type=waving\&color=0:0f0f0f,100:1a1a2e\&height=200\&section=header\&text=AUTONOMOUS%20TRANSPORT%20ROVER\&fontSize=32\&fontColor=ffffff\&fontAlignY=38\&desc=Low-Cost%20Industrial%20AGV%20%7C%20ESP32-S3%20%7C%20Poor%20Man's%20LIDAR\&descAlignY=58\&descSize=16\&descColor=a0a0b0" alt="banner"/>
+Low-cost industrial AGV using ESP32-S3 and Poor Man's LiDAR
 
-<br/>
+[![ESP32-S3](https://img.shields.io/badge/ESP32--S3-Embedded%20Controller-E7352C?style=for-the-badge&logo=espressif&logoColor=white)](https://www.espressif.com/)
+[![PlatformIO](https://img.shields.io/badge/PlatformIO-IoT%20Development-FF7F00?style=for-the-badge&logo=platformio&logoColor=white)](https://platformio.org/)
+[![Robotics](https://img.shields.io/badge/Autonomous-Robotics-0f0f0f?style=for-the-badge&logo=openai&logoColor=white)](https://github.com/Ashwinkumar-k10/autonomous-transport-rover)
+[![C++](https://img.shields.io/badge/Firmware-C++-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
 
-[!\[🥈 Pragyan NIT Trichy](https://img.shields.io/badge/🥈%20Pragyan%20NIT%20Trichy-Ingenium'26%20Runner--Up-C0C0C0?style=for-the-badge\&labelColor=0f0f0f)](https://www.pragyan.org)
-[!\[Team](https://img.shields.io/badge/Team-TECHTONICS-blueviolet?style=for-the-badge\&labelColor=0f0f0f)](https://github.com)
+![Build](https://img.shields.io/github/actions/workflow/status/Ashwinkumar-k10/autonomous-transport-rover/build.yml?style=flat-square&label=Firmware%20Build&logo=github&labelColor=0f0f0f)
+![Platform](https://img.shields.io/badge/Platform-ESP32--S3-E7352C?style=flat-square&logo=espressif&logoColor=white&labelColor=0f0f0f)
+![Framework](https://img.shields.io/badge/Framework-PlatformIO-FF7F00?style=flat-square&logo=platformio&logoColor=white&labelColor=0f0f0f)
+![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square&labelColor=0f0f0f)
+![Version](https://img.shields.io/badge/Version-v1.0.0-3b82f6?style=flat-square&labelColor=0f0f0f)
+![Stars](https://img.shields.io/github/stars/Ashwinkumar-k10/autonomous-transport-rover?style=flat-square&logo=github&labelColor=0f0f0f)
 
-<br/>
-
-!\[Build](https://img.shields.io/github/actions/workflow/status/Ashwinkumar-k10/autonomous-transport-rover/build.yml?style=flat-square\&label=Firmware%20Build\&logo=github\&labelColor=0f0f0f)
-!\[Platform](https://img.shields.io/badge/Platform-ESP32--S3-E7352C?style=flat-square\&logo=espressif\&logoColor=white\&labelColor=0f0f0f)
-!\[Framework](https://img.shields.io/badge/Framework-PlatformIO-FF7F00?style=flat-square\&logo=platformio\&logoColor=white\&labelColor=0f0f0f)
-!\[License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square\&labelColor=0f0f0f)
-!\[Version](https://img.shields.io/badge/Version-v1.0.0-3b82f6?style=flat-square\&labelColor=0f0f0f)
-!\[Stars](https://img.shields.io/github/stars/Ashwinkumar-k10/autonomous-transport-rover?style=flat-square\&logo=github\&labelColor=0f0f0f)
-
+![C++](https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white)
+![Arduino](https://img.shields.io/badge/Arduino-00979D?style=flat-square&logo=arduino&logoColor=white)
+![WebSocket](https://img.shields.io/badge/WebSocket-Dashboard-8B5CF6?style=flat-square)
+![RFID](https://img.shields.io/badge/RFID-RC522-F59E0B?style=flat-square)
+![IMU](https://img.shields.io/badge/IMU-MPU6050-EF4444?style=flat-square)
 <br/>
 
 !\[C++](https://img.shields.io/badge/C++-00599C?style=flat-square\&logo=cplusplus\&logoColor=white)
