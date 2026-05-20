@@ -74,13 +74,13 @@ Monitoring         : Real-Time Web Dashboard (WebSocket)
 
 <div align="center">
   <a href="media/demo.mp4">
-    <img src="media/images/demo_thumbnail.jpg" alt="Demo Video" width="700"/>
+    <img src="media/images/prototype.jpg" alt="Demo Video" width="700"/>
   </a>
   <br/>
   <em>▶ Click to watch demo — Full autonomous navigation cycle with obstacle avoidance</em>
 </div>
 
-> 📺 Also on YouTube: [Watch Demo](https://youtube.com/YOUR_LINK)
+> 📺 Also on YouTube: [Watch Demo](https://drive.google.com/file/d/1zeIArAUCNW-aU8XivcR6jTd2cwxKjNC-/view?usp=drivesdk)
 
 ---
 
