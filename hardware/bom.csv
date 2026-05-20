@@ -1,0 +1,22 @@
+Item,Component,Model,Quantity,Unit Cost (INR),Total Cost (INR),Source,Notes
+1,Microcontroller,ESP32-S3 DevKitC-1,1,650,650,Robu.in,WiFi + BT 5.0
+2,Motor Driver,BTS7960 43A,2,220,440,Robu.in,High-current H-bridge
+3,DC Geared Motor,12V 100RPM,2,350,700,Robu.in,High-torque
+4,IR Sensor Array,5-channel TCRT5000,1,120,120,Amazon.in,Line detection
+5,RFID Reader,RC522 Module,1,90,90,Amazon.in,13.56 MHz
+6,RFID Tags,Mifare 1K Cards,5,15,75,Amazon.in,Station markers
+7,Ultrasonic Sensor,HC-SR04,2,45,90,Robu.in,1x front + 1x LIDAR
+8,Servo Motor,MG90S Metal Gear,1,130,130,Robu.in,LIDAR sweep
+9,IMU,MPU6050 GY-521,1,80,80,Amazon.in,Tilt monitoring
+10,Load Cell,50kg Bar Type,1,180,180,Amazon.in,Payload measurement
+11,Load Cell ADC,HX711 Module,1,55,55,Amazon.in,24-bit amplifier
+12,Bump Sensor,Mechanical Limit Switch,2,25,50,Amazon.in,Collision safety
+13,Power Module,LM2596 Buck Converter,2,60,120,Amazon.in,5V + 3.3V rails
+14,Battery,12V 7Ah Lead Acid,1,850,850,Local,Main power
+15,Chassis,Aluminium + MS Plate,1,400,400,Fabricated,Custom reinforced
+16,Wheels,Hard Rubber 65mm,4,60,240,Amazon.in,Traction
+17,Caster Wheel,360° Swivel 50mm,1,80,80,Amazon.in,Front balance
+18,Jumper Wires,M-M M-F F-F Set,1,80,80,Amazon.in,Connections
+19,PCB / Veroboard,7x9cm,2,30,60,Amazon.in,Sensor mounts
+20,Misc (nuts/bolts/standoffs),Assorted,1,150,150,Local,Hardware
+,,,,TOTAL,4690,,
