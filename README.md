@@ -1,231 +1,325 @@
-# 🫁 DysphagiaGuard
+<div align="center">
 
-> **Real-time swallowing disorder detection and aspiration prevention system** — an IoT-powered, AI-assisted wearable designed to protect patients with dysphagia from life-threatening silent aspiration.
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f0f0f,100:1a1a2e&height=200&section=header&text=AUTONOMOUS%20TRANSPORT%20ROVER&fontSize=32&fontColor=ffffff&fontAlignY=38&desc=Low-Cost%20Industrial%20AGV%20%7C%20ESP32-S3%20%7C%20Poor%20Man's%20LIDAR&descAlignY=58&descSize=16&descColor=a0a0b0" alt="banner"/>
 
----
+<br/>
 
-## 📋 Table of Contents
+![Platform](https://img.shields.io/badge/Platform-ESP32--S3-E7352C?style=for-the-badge&logo=espressif&logoColor=white&labelColor=0f0f0f)
+![Framework](https://img.shields.io/badge/Framework-PlatformIO-FF7F00?style=for-the-badge&logo=platformio&logoColor=white&labelColor=0f0f0f)
+![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge&labelColor=0f0f0f)
 
-- [Overview](#overview)
-- [Technology Stack](#technology-stack)
-- [System Architecture & Data Flow](#system-architecture--data-flow)
-- [Core Features](#core-features)
-- [Classification Engine](#classification-engine)
-- [Real-World Applications](#real-world-applications)
-- [Challenges & Optimizations](#challenges--optimizations)
-- [Future Roadmap](#future-roadmap)
-- [Results](#results)
+<br/>
 
----
+![C++](https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white)
+![Arduino](https://img.shields.io/badge/Arduino-00979D?style=flat-square&logo=arduino&logoColor=white)
+![WebSocket](https://img.shields.io/badge/WebSocket-Real--Time%20Dashboard-8B5CF6?style=flat-square)
+![RFID](https://img.shields.io/badge/RFID-RC522-F59E0B?style=flat-square)
+![IMU](https://img.shields.io/badge/IMU-MPU6050-EF4444?style=flat-square)
+![Ultrasonic](https://img.shields.io/badge/Ultrasonic-HC--SR04-06B6D4?style=flat-square)
+![Motor Driver](https://img.shields.io/badge/Motor%20Driver-BTS7960-84CC16?style=flat-square)
+![Load Cell](https://img.shields.io/badge/Load%20Cell-HX711%2050kg-F97316?style=flat-square)
+![Navigation](https://img.shields.io/badge/Navigation-IR%20Line%20%2B%20PID-EC4899?style=flat-square)
+![AGV](https://img.shields.io/badge/Type-AGV%20%7C%2020--25kg%20Payload-6366F1?style=flat-square)
 
-## Overview
-
-Dysphagia (swallowing disorder) affects over **8 million people** in India and is a leading cause of aspiration pneumonia — one of the most preventable yet fatal complications in stroke, Parkinson's, and ALS patients. Current clinical assessment (Videofluoroscopy) is expensive, radiation-intensive, and episodic — offering no real-time protection between clinical visits.
-
-**DysphagiaGuard** is a neck-worn, multi-sensor IoT device paired with an Android app that continuously classifies swallowing events in real time — distinguishing safe swallows, unsafe swallows (laryngeal penetration), and coughs (silent aspiration reflex) — and alerts caregivers instantly.
-
----
-
-## Technology Stack
-
-### Firmware (ESP32 Hardware)
-
-| Component | Technology |
-|---|---|
-| Language | C++ / Arduino Framework |
-| Microcontroller | ESP32 |
-| Networking | `AsyncTCP` + `ESPAsyncWebServer` (async WebSocket) |
-| Storage | `Preferences.h` (Non-Volatile Storage for session persistence) |
-| Sensors | Analog microphone (pharyngeal acoustics) + MPU6050 IMU (laryngeal motion) |
-
-### Android Application
-
-| Component | Technology |
-|---|---|
-| Language | Kotlin |
-| UI Framework | Jetpack Compose + Material 3 + Glassmorphism |
-| Architecture | MVVM + Kotlin Coroutines + `StateFlow` |
-| Networking | `OkHttp3` (persistent WebSocket client) |
-| Local Database | Room (SQLite) — patient profiles & event history |
-| PDF Generation | `iTextG` |
-| Build System | Gradle (Kotlin DSL) |
+</div>
 
 ---
 
-## System Architecture & Data Flow
+## 📌 Table of Contents
+
+- [Overview](#-overview)
+- [Demo](#-demo)
+- [Key Innovation — Poor Man's LIDAR](#-key-innovation--poor-mans-lidar)
+- [System Architecture](#-system-architecture)
+- [Features](#-features)
+- [Hardware Stack](#-hardware-stack)
+- [Repository Structure](#-repository-structure)
+- [Getting Started](#-getting-started)
+- [Web Dashboard](#-web-dashboard)
+- [Test Results](#-test-results--validation)
+- [Recognition](#-recognition)
+- [License](#-license)
+
+---
+
+## 🤖 Overview
+
+> **Autonomous Material Transport Rover** is a low-cost, embedded-systems-based AGV (Automated Guided Vehicle) designed to replace expensive industrial robots in small and medium-scale manufacturing environments.
+
+Built for **narrow-aisle, human-shared workspaces**, the rover combines IR line navigation, RFID-based station docking, real-time payload monitoring, and a novel **servo-mounted ultrasonic obstacle scanner** — delivering industrial-grade automation at a fraction of conventional AGV costs.
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        HARDWARE LAYER (ESP32)                       │
-│                                                                     │
-│   [Mic (ADC)]  ──►  Peak Envelope ──►┐                              │
-│   [MPU6050]    ──►  IMU RMS       ──►├──► Classification ──► JSON   │
-│                     ZCR           ──►┘    Engine (50ms)    Broadcast│
-└─────────────────────────────┬───────────────────────────────────────┘
-                              │  WebSocket  ws://192.168.4.1/ws
-                              │  100ms broadcast interval
-                              ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                       ANDROID APPLICATION                           │
-│                                                                     │
-│  OkHttp3           MonitorViewModel          Jetpack Compose UI     │
-│  WebSocket  ──►   StateFlow / Flow   ──►    LiveMonitorScreen       │
-│  Client            (Coroutines)              WaveformCanvas         │
-│                         │                    AI Assistant           │
-│                         ▼                    Alert History          │
-│                   Room Database                                     │
-│                   (SQLite)        ──►        PDF Report (iTextG)    │
-└─────────────────────────────────────────────────────────────────────┘
+Target Environment : Small-to-medium factories, warehouses, labs
+Payload Capacity   : 20 – 25 kg
+Navigation Method  : IR Line Following + RFID Junction Recognition
+Obstacle Detection : Poor Man's LIDAR (Servo + HC-SR04)
+Control Unit       : ESP32-S3 (WiFi + Bluetooth 5.0)
+Monitoring         : Real-Time Web Dashboard (WebSocket)
 ```
 
-### Phase 1 — Hardware Acquisition & Signal Processing
+---
 
-The ESP32 runs a continuous **20Hz (50ms) windowed analysis** loop:
+## 🎬 Demo
 
-1. **Sensor Polling** — Simultaneous sampling of the analog microphone (pharyngeal sounds) and MPU6050 IMU (laryngeal acceleration).
-2. **Feature Extraction** per window:
-   - **IMU RMS** — Root Mean Square of motion data; indicates laryngeal movement magnitude.
-   - **Mic Envelope** — Peak acoustic amplitude; detects pharyngeal sound bursts.
-   - **ZCR (Zero-Crossing Rate)** — Proxy for signal turbulence; critical for detecting wet gurgles and coughs.
-3. **Classification** — The three features are combined against thresholds to label the window (see [Classification Engine](#classification-engine)).
+### Prototype
 
-### Phase 2 — WebSocket Transmission
+<div align="center">
+  <img src="media/images/prototype.jpg" alt="Prototype" width="700"/>
+</div>
 
-- The ESP32 operates as a **WiFi Access Point** (`DysphagiaGuard-AP`).
-- Every **100ms**, it serializes the current classification, raw sensor values, and session totals into a **JSON packet** and broadcasts it over WebSocket.
+### Live Demo
 
-```json
-{
-  "event": "UNSAFE",
-  "imu_rms": 0.87,
-  "mic_env": 412,
-  "zcr": 0.12,
-  "session_safe": 4,
-  "session_unsafe": 3,
-  "session_cough": 1
-}
+<div align="center">
+  <a href="https://drive.google.com/file/d/1zeIArAUCNW-aU8XivcR6jTd2cwxKjNC-/view?usp=drivesdk">
+    <img src="media/images/demo_thumbnail.jpg" alt="Demo Video" width="700"/>
+  </a>
+  <br/>
+  <em>▶ Click to watch demo — Full autonomous navigation cycle with obstacle avoidance</em>
+</div>
+
+---
+
+## 💡 Key Innovation — Poor Man's LIDAR
+
+Traditional industrial LIDAR sensors cost **$100–$500+**. We engineered an equivalent at **< ₹500**.
+
+| Parameter | Industrial LIDAR | Poor Man's LIDAR |
+|-----------|-----------------|-----------------|
+| Cost | $100 – $500 | < ₹500 (~$6) |
+| Angular Range | 360° | 30° – 150° |
+| Sensor | Laser Time-of-Flight | HC-SR04 Ultrasonic |
+| Actuator | Spinning motor | MG90S Servo |
+| Output | Full point cloud | Obstacle map + safe direction |
+
+**Working Principle:**
+1. Servo rotates the ultrasonic sensor from **30° → 150°** in discrete steps
+2. Distance is measured at each angular position
+3. Angle-distance pairs form a **basic obstacle map**
+4. Controller selects the **safest navigation direction** autonomously
+
+---
+
+## 🏗 System Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     ESP32-S3 CORE                        │
+│                                                          │
+│  ┌──────────────┐   ┌───────────────┐   ┌────────────┐  │
+│  │  Navigation  │   │    Safety     │   │  Comms     │  │
+│  │  ──────────  │   │  ──────────── │   │  ───────── │  │
+│  │  IR Array    │   │  Bump Sensor  │   │  WiFi AP   │  │
+│  │  RFID RC522  │   │  IMU MPU6050  │   │  WebSocket │  │
+│  │  PID Control │   │  Load Cell    │   │  Dashboard │  │
+│  └──────────────┘   └───────────────┘   └────────────┘  │
+│                                                          │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │          Poor Man's LIDAR Module                 │    │
+│  │   Servo MG90S ──► HC-SR04 ──► Obstacle Map      │    │
+│  └─────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────┘
+           │                         │
+    ┌──────▼──────┐          ┌───────▼──────┐
+    │  BTS7960    │          │  Web Browser │
+    │  Dual Motor │          │  Dashboard   │
+    │  Driver     │          │  (Telemetry) │
+    └─────────────┘          └─────────────┘
 ```
 
-### Phase 3 — Android Reception & Reactive UI
+---
 
-1. `OkHttp3` WebSocket client receives the JSON and parses it into a `SwallowEventData` Kotlin object.
-2. `MonitorViewModel` updates its `StateFlow` — no polling, fully reactive.
-3. **Jetpack Compose** UI components recompose automatically: waveform updates, color changes, haptic feedback — all within milliseconds of the ESP32 classification.
+## ✨ Features
+
+### 🧭 Navigation
+- **IR Sensor Array** — 5-channel line detection for precise path tracking
+- **PID Line Following** — smooth, oscillation-free tracking at operating speed
+- **RFID Station Recognition** — junction-level command execution (stop / turn / dock)
+- **Bump Sensing** — collision detection as a last-resort safety layer
+
+### 🔍 Obstacle Avoidance
+- **Poor Man's LIDAR** — servo-swept ultrasonic scanning at 30°–150°
+- **Threshold-Based Halt** — immediate stop on object detection within safe zone
+- **Path Re-evaluation** — selects freest direction from obstacle map
+
+### ⚖️ Payload Management
+- **HX711 + Load Cell** — real-time weight measurement
+- **Pickup / Drop Detection** — state machine triggers on weight delta
+- **Overload Alert** — WebSocket push notification to dashboard
+
+### 🛡️ Safety Systems
+- **MPU6050 IMU** — tilt angle monitoring, cutoff on excessive lean
+- **Bump Sensors** — front physical collision detection
+- **Dashboard Alerts** — obstacle / tilt / overload warnings in real time
+
+### 📊 Web Dashboard
+- Live IR sensor path status
+- Ultrasonic distance graph
+- RFID station ID feed
+- Payload weight readout
+- IMU tilt visualization
+- Alert notification panel
 
 ---
 
-## Core Features
+## 🔧 Hardware Stack
 
-### 🔬 Cough vs. Swallow Classifier (The Clinical Twist)
+| Component | Model | Purpose |
+|-----------|-------|---------|
+| Microcontroller | ESP32-S3 | Main controller + WiFi |
+| Motor Driver | BTS7960 (×2) | High-current DC motor control |
+| IR Sensor Array | 5-channel | Line detection |
+| RFID Reader | RC522 | Junction/station recognition |
+| Ultrasonic Sensor | HC-SR04 | Obstacle detection |
+| Servo Motor | MG90S | Poor Man's LIDAR sweep |
+| IMU | MPU6050 | Tilt & stability monitoring |
+| Load Cell + ADC | 50kg + HX711 | Payload measurement |
+| Bump Sensor | Mechanical | Physical collision detection |
+| Chassis | Custom | Reinforced for 20–25 kg load |
+| Motors | DC Geared | High-torque traction |
 
-Silent aspiration — food entering the lungs without triggering a visible swallow — is one of the most dangerous and underdiagnosed events in dysphagia patients. The only physiological reflex is often a **subtle cough**.
-
-- **Duration threshold**: Swallows require coordinated muscle activity lasting **>100ms**. Coughs are explosive diaphragm contractions lasting **<80ms**.
-- Coughs are tracked separately, highlighted in **orange**, trigger a **double-pulse vibration**, and contribute to the **Aspiration Risk Ratio**.
-
-### 🤖 Context-Aware AI Clinical Assistant
-
-- Reads **live session data** from `MonitorViewModel` and generates contextual safety guidance.
-- Logic: If `unsafe_count >= 3`, the assistant issues a strict stop-feeding warning.
-- Explains clinical terms (e.g., "Silent Aspiration", "Laryngeal Penetration") in plain language for non-medical caregivers.
-
-### 🎭 Live Demo Engine (`DemoDataSource.kt`)
-
-- Kotlin Coroutines-powered software simulation that mathematically generates realistic sensor signals:
-  - **Safe swallows** → smooth bell-curve IMU profile
-  - **Unsafe swallows** → high-amplitude IMU + mic burst
-  - **Coughs** → rapid noisy double-peak
-- Injected into the same UI data pipeline as real hardware — indistinguishable from live data.
-
-### 🔁 Bi-Directional Manual Triggering
-
-- SAFE / UNSAFE / COUGH buttons on `LiveMonitorScreen` inject simulated events for demonstration.
-- When connected to hardware, these commands are **sent back to the ESP32 via WebSocket** (`ws.send("COUGH")`), syncing physical LED/motor feedback with the app in real time.
-
-### 🚨 Emergency SMS Fallback
-
-- After **3 consecutive UNSAFE events**, `MonitorViewModel` fires an `Intent.ACTION_SENDTO`.
-- Opens the system SMS app with the caregiver's number and a pre-filled distress message — bypassing Android's background SMS restrictions.
-
-### 🗄️ Persistent Storage & PDF Report Generation
-
-- Every event is persisted to **Room (SQLite)**.
-- `SessionRepository` computes session totals and duration on session close.
-- `DailyReportScreen` pulls historical data; `iTextG` generates a formatted PDF report shareable with a Speech-Language Pathologist (SLP).
+> 📄 Full BOM with part numbers and cost: [`hardware/bom.csv`](hardware/bom.csv)
 
 ---
 
-## Classification Engine
+## 📁 Repository Structure
 
-| Event | IMU RMS | Mic Envelope | Duration | ZCR | Meaning |
-|---|---|---|---|---|---|
-| `SAFE` | Moderate | Low–Moderate | 100–200ms | Low | Normal coordinated swallow |
-| `UNSAFE` | High | High | 100–200ms | Low | Wet gurgle / laryngeal penetration |
-| `COUGH` | Very High | High | < 80ms | High | Turbulent airflow / aspiration reflex |
-| `NOISE` | — | — | Too short | — | Filtered out; low confidence |
-| `IDLE` | Near-zero | Near-zero | — | — | Baseline; no event |
-
----
-
-## Real-World Applications
-
-| Domain | Use Case |
-|---|---|
-| 🏥 **Smart Hospital Monitoring** | Continuous non-invasive swallowing monitoring in ICUs; reduces manual supervision load |
-| 👵 **Assisted Living & Elder Care** | Enables safe feeding for elderly patients; reduces dependency on constant caregiver presence |
-| 🏠 **Remote Healthcare Ecosystem** | Real-time patient monitoring at home; supports telemedicine and remote diagnosis |
-| 🧠 **Neurological Disorder Management** | Tracks swallowing ability over time for stroke, Parkinson's, and ALS patients |
-| 🍽️ **Smart Feeding Systems** | Integrates with assistive feeding devices to ensure safe intake during meals |
-
----
-
-## Challenges & Optimizations
-
-### Design
-- Accurate sensor placement on the neck region for reliable signal capture, balancing wearability against signal precision in a compact form factor.
-
-### Hardware & Wiring
-- Managing multiple interfaces (I2C, SPI, ADC) on ESP32 simultaneously.
-- Ensuring stable power from Li-Po battery without voltage drops; maintaining common ground and noise isolation.
-
-### Signal Processing
-- Handling noisy and inconsistent microphone signals → **applied smoothing filters** to reduce noise.
-- Synchronizing multi-sensor data in real time → **optimized sensor placement** based on laryngeal motion dynamics.
-
-### Software
-- Debugging the full end-to-end pipeline (ESP32 → Room DB → UI).
-- Implemented **lightweight rule-based classification** for fast embedded processing.
-- Designed an **efficient real-time data pipeline** with minimal Compose recomposition overhead.
-- Optimized SQL queries for time-series dashboard performance.
+```
+autonomous-transport-rover/
+├── firmware/
+│   ├── src/
+│   │   ├── main.cpp
+│   │   ├── navigation/          # IR, RFID, PID
+│   │   ├── sensors/             # Ultrasonic, IMU, Load Cell
+│   │   └── comms/               # WiFi, WebSocket
+│   ├── include/
+│   ├── lib/
+│   └── platformio.ini
+├── dashboard/
+│   ├── index.html               # Real-time telemetry UI
+│   └── ws_handler.js
+├── hardware/
+│   ├── schematics/              # Circuit diagrams (PDF + KiCad)
+│   └── bom.csv
+├── docs/
+│   ├── architecture.md
+│   ├── wiring_guide.md
+│   └── test_cases.md
+├── media/
+│   ├── demo.mp4                 # ← DROP YOUR VIDEO HERE
+│   └── images/
+│       ├── prototype.jpg        # ← DROP YOUR PHOTO HERE
+│       └── demo_thumbnail.jpg   # ← THUMBNAIL FOR VIDEO PREVIEW
+├── .github/
+│   └── workflows/
+│       └── build.yml
+├── README.md
+├── LICENSE
+├── CHANGELOG.md
+└── CONTRIBUTING.md
+```
 
 ---
 
-## Future Roadmap
+## 🚀 Getting Started
 
-### 🧠 Adaptive Learning System
-- Self-learning model that adapts thresholds to individual swallowing patterns over time.
-- Personalized baselines built from user history stored in Room DB.
+### Prerequisites
 
-### ⚡ Early Aspiration Prediction
-- Predict unsafe swallowing events **before** they fully occur using trend analysis.
-- Shift from reactive detection to **preventive alerts**.
+```bash
+# Install PlatformIO CLI
+pip install platformio
 
-### 👥 Multi-User & Patient Profiling
-- Support multiple patient profiles in a single system.
-- Long-term health trend analysis and cross-session reporting.
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/autonomous-transport-rover.git
+cd autonomous-transport-rover/firmware
+```
+
+### Flash Firmware
+
+```bash
+# Build
+pio run
+
+# Upload to ESP32-S3
+pio run --target upload --upload-port /dev/ttyUSB0
+
+# Monitor serial output
+pio device monitor --baud 115200
+```
+
+### Configure WiFi
+
+Edit `firmware/src/comms/wifi_config.h`:
+```cpp
+#define WIFI_SSID     "your_ssid"
+#define WIFI_PASSWORD "your_password"
+#define WS_PORT       81
+```
+
+### Open Dashboard
+
+After flashing, the ESP32-S3 prints its IP to Serial. Open:
+```
+http://<ESP32_IP>/dashboard
+```
 
 ---
 
-## Results
+## 📡 Web Dashboard
 
-> *"The system accurately captures multi-sensor data and classifies swallowing events with real-time visualization and alerts."*
+The dashboard streams live telemetry via **WebSocket** at 10 Hz.
 
-- ✅ Real-time event classification at **10 Hz** with sub-100ms UI latency
-- ✅ Three-class detection: Safe, Unsafe, Cough — clinically meaningful differentiation
-- ✅ Fully functional Android app with persistent history, AI assistant, and PDF export
-- ✅ Hardware-software bidirectional sync validated end-to-end
-- ✅ Demo mode enables reliable presentation without physical hardware dependency
+| Panel | Data |
+|-------|------|
+| Path Status | IR sensor array (5-channel binary) |
+| Obstacle Distance | Ultrasonic reading (cm) + LIDAR sweep map |
+| RFID Log | Station ID + last command |
+| Payload | Live weight (kg) + state |
+| IMU | Roll / Pitch tilt angles |
+| Alerts | Obstacle / Overload / Tilt / Path-loss |
 
 ---
 
-*DysphagiaGuard — Protecting every swallow, in real time.*
+## ✅ Test Results & Validation
+
+All modules passed integration testing. Full log: [`docs/test_cases.md`](docs/test_cases.md)
+
+| Module | Test ID | Result | Description |
+|--------|---------|--------|-------------|
+| ESP32-S3 Boot | SYS_TC_01 | ✅ Pass | All sensors & drivers initialized |
+| Motor Driver (×2) | MOT_TC_01/02 | ✅ Pass | Forward motion, smooth drive |
+| IR Sensor Array | IR_TC_01 | ✅ Pass | Line detected accurately |
+| Ultrasonic | ULT_TC_01 | ✅ Pass | Obstacle at threshold distance |
+| Poor Man's LIDAR | ULT_TC_02 | ✅ Pass | Free path identified via sweep |
+| Servo Sweep | SERVO_TC_01 | ✅ Pass | 30°–150° rotation achieved |
+| RFID Detection | RFID_TC_01 | ✅ Pass | UID read successfully |
+| RFID Navigation | RFID_TC_02 | ✅ Pass | Correct station action performed |
+| Load Cell | LOAD_TC_01 | ✅ Pass | Weight displayed accurately |
+| IMU Tilt | IMU_TC_01 | ✅ Pass | Tilt angle detected correctly |
+| Dashboard | DASH_TC_01 | ✅ Pass | Live telemetry streamed |
+| Full Integration | INT_TC_01 | ✅ Pass | End-to-end transport cycle |
+
+**12 / 12 test cases passed.**
+
+---
+
+## 🏆 Recognition
+
+| Event | Organizer | Category | Result |
+|-------|-----------|----------|--------|
+| **Ingenium '26** | Pragyan, NIT Trichy | Industrial Automation | 🥈 **Runner-Up** |
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see [`LICENSE`](LICENSE) for details.
+
+---
+
+<div align="center">
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a1a2e,100:0f0f0f&height=100&section=footer" alt="footer"/>
+
+*Open-source robotics — Star ⭐ the repo if it helped you build something awesome*
+
+</div>
